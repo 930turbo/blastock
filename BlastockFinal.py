@@ -17,8 +17,8 @@ end = dt.datetime(2020,1,1)
 
 df = web.DataReader(tickerSym, 'yahoo', start, end)
 
-# ma = moving average / This will take todays price and the last 99 days and come up with an average. This makes it easier for us to see up-trends etc
-df['100ma'] = df['Adj Close'].rolling(window=100, min_periods = 0).mean()
+# ma = moving average / This will take todays price and the last 49 days and come up with an average. This makes it easier for us to see up-trends etc
+df['50ma'] = df['Adj Close'].rolling(window=100, min_periods = 0).mean()
 df.dropna(inplace=True)
 
 # ohlc = open high low close    
@@ -35,8 +35,8 @@ print(df_ohlc.head())
 df.dropna(inplace=True)
 print(df.head())
 
-ax1 = plt.subplot2grid((6,1), (0,0), rowspan = 5, colspan = 1)
-ax2 = plt.subplot2grid((6,1), (5,0), rowspan = 1, colspan = 1, sharex = ax1)
+ax1 = plt.subplot2grid((10,1), (0,0), rowspan = 5, colspan = 1)
+ax2 = plt.subplot2grid((10,1), (5,0), rowspan = 1, colspan = 1, sharex = ax1)
 # Will take MDates and make them 'nice' looking showing actual text
 ax1.xaxis_date()
 
