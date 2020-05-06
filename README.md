@@ -1,4 +1,4 @@
-# Blastock 🚀
+# Blastock 📈🚀
 
 Welcome to Blastock, the easiest way to view stock data in just two simple steps.
 
