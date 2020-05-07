@@ -1,6 +1,6 @@
 # Blastock 📈🚀
 
-Welcome to Blastock, the easiest way to view stock data in just two simple steps.
+Welcome to Blastock, the easiest way to view stock data in just a few simple steps.
 
 ## Getting Started
 
