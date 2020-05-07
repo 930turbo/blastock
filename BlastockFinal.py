@@ -2,7 +2,7 @@ import importlib
 import datetime as dt
 import matplotlib.pyplot as plt
 from matplotlib import style
-from mpl_finance import candlestick_ohlc
+from mplfinance.original_flavor import candlestick_ohlc
 # matplotlib does not use datetime dates so we need this next import
 import matplotlib.dates as mdates
 import pandas as pd
@@ -12,7 +12,7 @@ tickerSym = input("Enter ticker symbol desired: ")
 
 style.use('ggplot')
 
-start = dt.datetime(2000,1,1)
+start = dt.datetime(1980,1,1)
 end = dt.datetime(2020,1,1)
 
 df = web.DataReader(tickerSym, 'yahoo', start, end)
@@ -46,7 +46,7 @@ candlestick_ohlc(ax1, df_ohlc.values, width = 3, colorup = 'b')
 ax2.fill_between(df_volume.index.map(mdates.date2num), df_volume.values, 0)
 
 ax1.plot(df.index, df['Adj Close']) 
-ax1.plot(df.index, df['100ma'])
+#ax1.plot(df.index, df['100ma'])
 ax2.bar(df.index, df['Volume'])
 
 print(df[['Open', 'High']].head())
