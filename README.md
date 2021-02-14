@@ -19,7 +19,7 @@ What things you need to install the software and how to install them
 
 ## Project Goal
 
-For this project, I wanted to create a program that (in a concise manner) would display stock information based on user input. As a data science student and programmer at heart, I honestly didn't know too much about the stock market or extracting data from it. I was able to shorten this version (public release 1.0) to only 57 lines of code. This allows this version to be the opposite of resource intensive and it's able to display all the required data in a neat fashion. 
+For this project, I wanted to create a program that would display stock information based on user input. As a data science student this project seemed like a fun challenge and would also allow me to start on the creation of my personal thesis paper. I was able to shorten this version (public release 1.0) to only 57 lines of code allowing for this vpublic version to be lightweight.
 
 ### Reading the Chart
 
@@ -39,6 +39,4 @@ This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md
 
 ## Acknowledgments
 
-* Thank you to matplotlib.org for the API
-* Thank you to Pandas.pydata for the API
-* And thank you to stack overflow for helping with little implementation errors
+
