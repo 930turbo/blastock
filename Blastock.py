@@ -1,57 +1,63 @@
-import importlib
-import datetime as dt
-import matplotlib.pyplot as plt
-from matplotlib import style
-from mplfinance.original_flavor import candlestick_ohlc
-# matplotlib does not use datetime dates so we need this next import
-import matplotlib.dates as mdates
 import pandas as pd
-import pandas_datareader.data as web
+import yfinance as yf
+import matplotlib.pyplot as plt
+from sklearn.linear_model import LinearRegression
+from sklearn.ensemble import GradientBoostingRegressor
+from keras.models import Sequential
+from keras.layers import LSTM, Dense
 
-tickerSym = input("Enter ticker symbol desired: ")
+def get_data(ticker):
+    # Get stock data from yahoo finance
+    data = yf.download(ticker)
+    return data
 
-style.use('ggplot')
+def plot_data(data):
+    # Plot the closing price over time
+    data['Close'].plot(figsize=(10,5))
+    plt.ylabel("Closing Price")
+    plt.xlabel("Date")
+    plt.show()
 
-start = dt.datetime(1980,1,1)
-end = dt.datetime(2020,1,1)
+def make_prediction(data, model_type='linear'):
+    if model_type == 'linear':
+        # Use linear regression to make a prediction
+        X = range(0,len(data.index))
+        X = pd.DataFrame(X)
+        y = data['Close']
+        model = LinearRegression().fit(X,y)
+        prediction = model.predict([[len(data.index)]])
+    elif model_type == 'gbm':
+        # Use GBM to make a prediction
+        X = range(0,len(data.index))
+        X = pd.DataFrame(X)
+        y = data['Close']
+        model = GradientBoostingRegressor().fit(X, y)
+        prediction = model.predict([[len(data.index)]])
+    elif model_type == 'lstm':
+        # Use LSTM to make a prediction
+        X = data['Close'].values
+        X = X.reshape(len(X), 1)
+        model = Sequential()
+        model.add(LSTM(50, return_sequences=True, input_shape=(1, 1)))
+        model.add(LSTM(50))
+        model.add(Dense(1))
+        model.compile(loss='mean_squared_error', optimizer='adam')
+        model.fit(X, y, epochs=100, batch_size=1, verbose=2)
+        prediction = model.predict([[len(data.index)]])
+    return prediction
 
-df = web.DataReader(tickerSym, 'yahoo', start, end)
+def should_invest(prediction, current_price):
+    # Make a recommendation to invest or not
+    if prediction > current_price:
+        print("Based on previous trends, it may be a good idea to invest in this stock.")
+    else:
+        print("Based on previous trends, it may not be a good idea to invest in this stock.")
 
-# ma = moving average / This will take todays price and the last 49 days and come up with an average. This makes it easier for us to see up-trends etc
-df['50ma'] = df['Adj Close'].rolling(window=100, min_periods = 0).mean()
-df.dropna(inplace=True)
-
-# ohlc = open high low close    
-# Resample data for 5 days
-df_ohlc = df['Adj Close'].resample('5D').ohlc()
-# This way we get the true volume instead of the average volume
-df_volume = df['Volume'].resample('5D').sum()
-
-df_ohlc.reset_index(inplace = True)
-
-df_ohlc['Date'] = df_ohlc['Date'].map(mdates.date2num)
-print(df_ohlc.head())
-
-df.dropna(inplace=True)
-print(df.head())
-
-ax1 = plt.subplot2grid((10,1), (0,0), rowspan = 5, colspan = 1)
-ax2 = plt.subplot2grid((10,1), (5,0), rowspan = 1, colspan = 1, sharex = ax1)
-# Will take MDates and make them 'nice' looking showing actual text
-ax1.xaxis_date()
-
-# Define size of candlesticks and color, I have blue set to up and red set to down
-candlestick_ohlc(ax1, df_ohlc.values, width = 3, colorup = 'b')
-# Have to map for the x and then the volume will be the y (the zero will fill x and y)
-ax2.fill_between(df_volume.index.map(mdates.date2num), df_volume.values, 0)
-
-ax1.plot(df.index, df['Adj Close']) 
-#ax1.plot(df.index, df['100ma'])
-ax2.bar(df.index, df['Volume'])
-
-print(df[['Open', 'High']].head())
-
-df.plot()
-# Generates second grid where you can see legend and more data
-plt.legend(loc='best')
-plt.show()
+if __name__ == "__main__":
+    ticker = input("Enter the ticker symbol of the stock you want to monitor: ")
+    data = get_data(ticker)
+    plot_data(data)
+    model_type = input("Enter the type of model you want to use (linear, gbm, lstm): ")
+prediction = make_prediction(data, model_type)
+current_price = data['Close'][-1]
+should_invest(prediction, current_price)
